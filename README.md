@@ -62,19 +62,19 @@ MCPGen supports **task-based routing and orchestration** using **Arazzo specific
 
 Example Arazzo Workflow:
 ```yaml
-task: sync-user-data
+flow: sync-user-data
 description: Sync user info from Service A go Service B
 steps:
-  -  operationId: getUser
-     service: user-data
-     preHook: hooks/validate_user.go
-  -  operationId: syncData
-     service: data-service
+  -  id: getUser
+     call: user-data
+     pre_hook: hooks/validate_user.go
+  -  id: syncData
+     call: data-service
      postHooks: hooks/log_result.go
 ```
 
 Each task supports:
-* operationId: Tied to OpenAPI operations
+* id: Tied to OpenAPI operations
 * service: From your provider Swagger specs
 * preHook/postHook: Custom Go middleware or logic
 * Optional condition, retries, timeout, etc.
@@ -87,6 +87,80 @@ Each task supports:
 * Configurable **middlewares, error handling, and retry logic**
 * **Docker-ready** build output
 
+## 🏗️ High-Level Architecture
+```aiignore
++----------------------------+
+|     OpenAPI Parser        |  <-- Reads Swagger files (YAML/JSON)
++----------------------------+
+            |
+            v
++----------------------------+
+|    Arazzo Flow Parser     |  <-- Reads custom flow definitions
++----------------------------+
+            |
+            v
++----------------------------+
+|     MCP Flow Compiler     |  <-- Combines OpenAPI + Arazzo into flow DAGs
++----------------------------+
+            |
+            v
++----------------------------+
+|      Code Generator       |  <-- Generates Go/Python/Node MCP server
++----------------------------+
+            |
+            v
++----------------------------+
+|     Generated MCP Server  |  <-- Supports hooks, auth, error handling
++----------------------------+
+```
+
+## 🧠 Data Flow Diagram
+```aiignore
+[Swagger YAML]         [Arazzo YAML]
+     |                     |
+     v                     v
+[OpenAPILoader]       [ArazzoParser]
+     |                     |
+     +----------+----------+
+                |
+                v
+         [FlowCompiler]
+                |
+                v
+         [CodeGenerator]
+                |
+                v
+       [MCP Server Output (Go/Py/Node)]
+                |
+       [Includes Hooks, Logging, Auth]
+```
+
+## ⚙️ Detailed Design: Execution Flow
+Arazzo + OpenAPI combined to define flows like this:
+```yaml
+flow: ProcessUserOrder
+steps:
+  - id: ValidateInput
+    call: UserService.validateInput
+    pre_hook: checkRateLimit
+  - id: CreateOrder
+    call: OrderService.createOrder
+    post_hook: notifyAnalytics
+  - id: Payment
+    call: PaymentService.initiate
+    conditional_on: CreateOrder.status == "success"
+```
+
+## Internally becomes:
+```go
+type Step struct {
+	ID           string
+	ServiceCall  Endpoint
+	PreHook      string
+	PostHook     string
+	Condition    *ConditionExpr
+}
+```
 ## Use Case Example
 You have:
 * A `user-service` that fetches user info
