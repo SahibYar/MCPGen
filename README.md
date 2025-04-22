@@ -1,9 +1,11 @@
 # MCPGen
-**Auto-generate a multi-service MCP (Message Control Protocol) server from OpenAPI (Swagger) + Arazzo spec files**
-Turn API definitions and workflow specs into a smart, pluggable server that can coordinate real tasks - locally or in cloud. 
+**Auto-generate a multiservice MCP (Message Control Protocol) server from OpenAPI (Swagger) + Arazzo spec files**
+Turn API definitions and workflow specs into a smart,
+pluggable server that can coordinate real tasks—locally or in the cloud. 
 
 ## What is MCPGen ?
-MCGen is an opensource tool that builds builds a fully functional MCP Server - a control plane that coordinates operations across multiple APIs.
+MCGen is an opensource tool that builds a fully functional MCP Server —
+a control plane that coordinates operations across multiple APIs.
 It takes
   * One or more **OpenAPI/Swagger specs** (REST APIs)
   * Optional Arazzo workflow specs - (task flows and orchestration)
@@ -15,7 +17,7 @@ It takes
 
 ## Why Use MCPGen ?
 Modern systems use **microservices**, each with their own APIs. Exposing all of them to clients (CLIs, users, integration) is messy and risky. 
-Microservices and APIs are great - but they're not always friends for CLI tools, integrations, or task-based workflows. 
+Microservices and APIs are great—but they're not always friends for CLI tools, integrations, or task-based workflows. 
 
 ### MCPGen gives you one control point:
 * One server, multiple services
@@ -66,7 +68,7 @@ steps:
   -  operationId: getUser
      service: user-data
      preHook: hooks/validate_user.go
-  -  operationIdL syncData
+  -  operationId: syncData
      service: data-service
      postHooks: hooks/log_result.go
 ```
@@ -80,7 +82,7 @@ Each task supports:
 * Supports **multiple OpenAPI specs**
 * Supports **Arazzo task coordination specs**
 * Generates a ready-to-run **MCP server in Go**
-* **Pre/post hooks** injection points
+* **Pre- / post-hooks** injection points
 * Validates request/response payloads.
 * Configurable **middlewares, error handling, and retry logic**
 * **Docker-ready** build output
@@ -109,7 +111,7 @@ MCPGen is early, and we'd love your help.
 PRs welcome for:
 * New hooks or middlewares
 * Workflow enhancements
-* Support for other language
+* Support for another language
 * Docs, examples, tests
 
 ## License
