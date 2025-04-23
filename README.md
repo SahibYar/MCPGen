@@ -1,5 +1,5 @@
 # MCPGen
-**Auto-generate a multiservice MCP (Message Control Protocol) server from OpenAPI (Swagger) + Arazzo spec files**
+**Auto-generate a multiservice MCP (Message Control Protocol) server from OpenAPI v2 (Swagger), v3 (Arazzo) Spec Files**
 Turn API definitions and workflow specs into a smart,
 pluggable server that can coordinate real tasks—locally or in the cloud. 
 
