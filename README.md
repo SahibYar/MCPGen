@@ -62,7 +62,15 @@ MCPGen supports **task-based routing and orchestration** using **Arazzo specific
 
 Example Arazzo Workflow:
 ```yaml
-flow: sync-user-data
+workflowId: sync-user-data
+summary: Sync user data
+inputs:
+  type: object
+  properties:
+        username:
+          type: string
+        password: 
+          type: User ID to sync
 description: Sync user info from Service A go Service B
 steps:
   -  id: getUser
@@ -152,7 +160,7 @@ steps:
 ```
 
 ## Internally becomes:
-```go
+```golang
 type Step struct {
 	ID           string
 	ServiceCall  Endpoint
