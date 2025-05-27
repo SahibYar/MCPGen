@@ -4,7 +4,7 @@ Turn API definitions and workflow specs into a smart,
 pluggable server that can coordinate real tasks—locally or in the cloud. 
 
 ## What is MCPGen ?
-MCGen is an opensource tool that builds a fully functional MCP Server —
+MCGen is a tool that builds a fully functional MCP Server —
 a control plane that coordinates operations across multiple APIs.
 It takes
   * One or more **OpenAPI/Swagger specs** (REST APIs)
@@ -15,10 +15,9 @@ It takes
   * Injects pre/post hooks, retries, validations
   * Wraps your microservices in a clean, centralized control layer
 
-## Why Use MCPGen ?
-Modern systems use **microservices**, each with their own APIs. Exposing all of them to clients (CLIs, users, integration) is messy and risky. 
-Microservices and APIs are great—but they're not always friends for CLI tools, integrations, or task-based workflows. 
-
+## Why Use MCP ?
+Modern systems use **microservices**, each with their own APIs. Exposing all of them to external world via (CLI, Rest end-points) is messy and risky. 
+RestAPIs and CLIs are great—but they're not always friendly for end user 
 ### MCPGen gives you one control point:
 * One server, multiple services
 * One endpoint, many API calls
@@ -97,28 +96,31 @@ Each task supports:
 
 ## 🏗️ High-Level Architecture
 ```aiignore
++-----------------------------------------------------------------------+
+|   +---------------------------+                                       |
+|   |     OpenAPI Parser        |  <-- Reads Swagger files (YAML/JSON)  |
+|   +---------------------------+                                       |
+|                                                                       |
+|                                                                       |
+|   +---------------------------+                                       |
+|   |    Arazzo Flow Parser     |  <-- Reads custom flow definitions    |
+|   +---------------------------+                                       |
+|                                                                       |
++-----------------------------------------------------------------------+
+            |
+            v
 +----------------------------+
-|     OpenAPI Parser        |  <-- Reads Swagger files (YAML/JSON)
+|     MCP Flow Compiler      |  <-- Combines OpenAPI + Arazzo into flow DAGs
 +----------------------------+
             |
             v
 +----------------------------+
-|    Arazzo Flow Parser     |  <-- Reads custom flow definitions
+|      Code Generator        |  <-- Generates Go/Python/Node MCP server
 +----------------------------+
             |
             v
 +----------------------------+
-|     MCP Flow Compiler     |  <-- Combines OpenAPI + Arazzo into flow DAGs
-+----------------------------+
-            |
-            v
-+----------------------------+
-|      Code Generator       |  <-- Generates Go/Python/Node MCP server
-+----------------------------+
-            |
-            v
-+----------------------------+
-|     Generated MCP Server  |  <-- Supports hooks, auth, error handling
+|     Generated MCP Server   |  <-- Supports hooks, auth, error handling
 +----------------------------+
 ```
 
@@ -140,6 +142,7 @@ Each task supports:
                 v
        [MCP Server Output (Go/Py/Node)]
                 |
+                v
        [Includes Hooks, Logging, Auth]
 ```
 
@@ -173,6 +176,7 @@ type Step struct {
 You have:
 * A `user-service` that fetches user info
 * A `sync-service` that pushes data to external systems
+
 You want:
 * A CLI command like `mycli sync-user --id 123`
 
@@ -181,7 +185,7 @@ MCPGen gives you:
 * Internally calls both APIs, applies hooks, handles responses
 * CLI stays simple, secure, and decoupled.
 
-## Roadmap
+## LongTerm Roadmap
 * Visual Arazzo editor (web-based)
 * gRPC + REST hybrid workflows.
 * Swagger UI integration for MCP endpoints.
@@ -198,5 +202,3 @@ PRs welcome for:
 
 ## License
 MIT License
-
-
