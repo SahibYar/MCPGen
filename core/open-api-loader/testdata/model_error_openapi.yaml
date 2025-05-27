@@ -1,0 +1,19 @@
+# This is valid YAML and OpenAPI structure, but missing required sections like responses,
+#  and may use invalid formats — both can cause BuildV3Model() to return errors.
+
+openapi: 3.0.0
+info:
+  title: Broken Model API
+  version: "1.0.0"
+paths:
+  /badpath:
+    get:
+      summary: This is missing a responses block
+components:
+  schemas:
+    InvalidSchema:
+      type: object
+      properties:
+        invalidProp:
+          type: string
+          format: unknown-format  # invalid format that might trigger validation error
