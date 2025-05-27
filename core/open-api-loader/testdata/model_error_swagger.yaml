@@ -1,0 +1,17 @@
+swagger: "2.0"
+info:
+  title: Broken API
+  version: "1.0.0"
+paths:
+  /example:
+    get:
+      summary: Example endpoint
+      responses:
+        200:
+          description: Success
+definitions:
+  InvalidModel:
+    type: object
+    properties:
+      name:
+        type: not_a_valid_type  # <-- invalid type triggers schema validation error

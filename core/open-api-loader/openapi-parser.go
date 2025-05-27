@@ -10,6 +10,7 @@ func ParseOpenAPISpecsFile(filePath string) (summary string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("cannot create v3 model")
+			summary = ""
 		}
 	}()
 	openApiSpecs, err := os.ReadFile(filePath)
