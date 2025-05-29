@@ -86,7 +86,6 @@ paths:
           description: pong
           schema:
             type: string
-definitions: {}
 `), 0644)
 	defer os.Remove(tmpFile)
 

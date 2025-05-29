@@ -1,8 +1,10 @@
 package open_api_loader
 
 import (
+	"MCPGen/core/utils"
 	"fmt"
 	"github.com/pb33f/libopenapi"
+	"github.com/pb33f/libopenapi/datamodel/high/base"
 	"os"
 )
 
@@ -32,27 +34,46 @@ func ParseSwaggerFile(filePath string) (summary string, err error) {
 	paths := v2Model.Model.Paths.PathItems.Len()
 	schemas := v2Model.Model.Definitions.Definitions.Len()
 
-	// Accessing possibly-nil fields, but protected by recover()
 	summary = fmt.Sprintf(
-		"There are %d paths and %d schemas in the document\nSwagger version: %s\nSwagger info: %s\nSwagger description: %s\nSwagger contact: %s\nSwagger license: %s\nSwagger version: %s\nSwagger terms of service: %s\nSwagger host: %s\nSwagger base path: %s\nSwagger schemes: %v\nSwagger produces: %v\nSwagger consumes: %v\nSwagger tags: %v\nSwagger security: %v\nSwagger external docs: %s\n",
+		"There are %d paths and %d schemas in the document\nSwagger version: %s\nSwagger info: %s\n",
 		paths,
 		schemas,
 		v2Model.Model.Swagger,
 		v2Model.Model.Info.Title,
-		v2Model.Model.Info.Description,
-		v2Model.Model.Info.Contact.Name,
-		v2Model.Model.Info.License.Name,
-		v2Model.Model.Info.Version,
-		v2Model.Model.Info.TermsOfService,
-		v2Model.Model.Host,
-		v2Model.Model.BasePath,
-		v2Model.Model.Schemes,
-		v2Model.Model.Produces,
-		v2Model.Model.Consumes,
-		v2Model.Model.Tags,
-		v2Model.Model.Security,
-		v2Model.Model.ExternalDocs.Description,
 	)
 
+	// Optional fields
+	var (
+		description  = utils.SafeStr(v2Model.Model.Info.Description)
+		contact      = utils.SafeStrPtr(v2Model.Model.Info.Contact, func(c *base.Contact) string { return c.Name })
+		license      = utils.SafeStrPtr(v2Model.Model.Info.License, func(l *base.License) string { return l.Name })
+		version      = utils.SafeStr(v2Model.Model.Info.Version)
+		terms        = utils.SafeStr(v2Model.Model.Info.TermsOfService)
+		host         = utils.SafeStr(v2Model.Model.Host)
+		basePath     = utils.SafeStr(v2Model.Model.BasePath)
+		schemes      = utils.SafeSlice(v2Model.Model.Schemes)
+		produces     = utils.SafeSlice(v2Model.Model.Produces)
+		consumes     = utils.SafeSlice(v2Model.Model.Consumes)
+		tags         = utils.SafeSlice(v2Model.Model.Tags)
+		security     = utils.SafeSlice(v2Model.Model.Security)
+		externalDocs = utils.SafeStrPtr(v2Model.Model.ExternalDocs, func(e *base.ExternalDoc) string { return e.Description })
+	)
+
+	summary += fmt.Sprintf(
+		"Swagger description: %s\nSwagger contact: %s\nSwagger license: %s\nSwagger version: %s\nSwagger terms of service: %s\nSwagger host: %s\nSwagger base path: %s\nSwagger schemes: %v\nSwagger produces: %v\nSwagger consumes: %v\nSwagger tags: %v\nSwagger security: %v\nSwagger external docs: %s\n",
+		description,
+		contact,
+		license,
+		version,
+		terms,
+		host,
+		basePath,
+		schemes,
+		produces,
+		consumes,
+		tags,
+		security,
+		externalDocs,
+	)
 	return summary, nil
 }
