@@ -146,6 +146,125 @@ Each task supports:
        [Includes Hooks, Logging, Auth]
 ```
 
+## 🔄 Supported MCPGen Flows & Execution Diagram
+
+The following diagram shows how MCPGen coordinates multiple services and flows, supporting advanced features like hooks, conditions, and multi-step orchestration:
+
+```aiignore
+[User/API/CLI Request]
+         |
+         v
++------------------------------+
+|        MCPGen Server         |
++------------------------------+
+         |
+         v
++------------------------------+
+|      Task Router/Dispatcher  |
++------------------------------+
+         |
+         v
++------------------------------+
+|         Flow Engine          |
+|  (Executes Steps Sequentially|
+|   or Conditionally)          |
++------------------------------+
+         |
+         v
++------------------------------+
+|        Step Executor         |
+|  (Calls API, Runs Hook, etc) |
++------------------------------+
+         |
+         v
++------------------------------+
+|   Aggregates Results/Errors  |
++------------------------------+
+         |
+         v
++------------------------------+
+|     Returns Response         |
++------------------------------+
+```
+
+---
+
+## 🤖 RAG-Enabled Code Generation: Go ↔ Python Integration
+
+MCPGen can use Retrieval Augmented Generation (RAG) for smarter code generation by integrating Go with a Python microservice. Here’s how the flow works:
+
+```aiignore
+[Go: CodeGenerator (RAGProvider)]
+         |
+         |  (HTTP POST /generate)
+         v
+[Python: rag_service (FastAPI)]
+         |
+         |  (RAGPipeline retrieves context from Redis)
+         v
+[Redis Vector DB] <---+--- [Python: modelcontextprotocol/python-sdk]
+         |
+         |  (Augmented prompt)
+         v
+[Python: Calls OpenAI LLM]
+         |
+         |  (Generated code)
+         v
+[Python: Returns code to Go]
+         |
+         v
+[Go: Uses generated code in MCP flow]
+```
+
+### Step-by-Step:
+1. **Go (RAGProvider)** sends a prompt to the Python `/generate` endpoint.
+2. **Python (rag_service)** retrieves relevant context from Redis using the python-sdk.
+3. The context is combined with the prompt and sent to OpenAI’s LLM.
+4. The generated code is returned to the Go app and used in the MCP flow.
+
+This enables context-aware, retrieval-augmented code generation for your MCP workflows.
+
+### Example Execution Flow
+```yaml
+flow: ProcessUserOrder
+steps:
+  - id: ValidateInput
+    call: UserService.validateInput
+    pre_hook: checkRateLimit
+  - id: CreateOrder
+    call: OrderService.createOrder
+    post_hook: notifyAnalytics
+  - id: Payment
+    call: PaymentService.initiate
+    conditional_on: CreateOrder.status == "success"
+```
+
+This flow will:
+- Validate input (with pre-hook)
+- Create an order (with post-hook)
+- Only initiate payment if order creation succeeds
+
+### Internal Representation (Go struct)
+```go
+// Represents a step in the flow
+type Step struct {
+	ID           string
+	ServiceCall  Endpoint
+	PreHook      string
+	PostHook     string
+	Condition    *ConditionExpr
+}
+```
+
+### Use Case Example
+- You have a `user-service` and a `sync-service`
+- You want a single endpoint `/run-task/sync-user-data` that:
+  - Fetches user info
+  - Pushes data to an external system
+  - Applies hooks and error handling
+
+MCPGen lets you define this as a flow and exposes it as a single, orchestrated endpoint.
+
 ## ⚙️ Detailed Design: Execution Flow
 Arazzo + OpenAPI combined to define flows like this:
 ```yaml
