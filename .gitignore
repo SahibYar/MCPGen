@@ -1,0 +1,10 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# OpenAI API key (keep this secret)
+/core/code-generator/.openai_key
