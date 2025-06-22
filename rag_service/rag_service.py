@@ -9,8 +9,9 @@ app = FastAPI()
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 rag = RAGPipeline(vector_db='redis', redis_url=REDIS_URL)
 
-# Read OpenAI API key directly from file
-with open("/Users/sahibyar/Work/MCPGen/core/code-generator/.openai_key", "r") as f:
+# Read OpenAI API key directly from relative file path
+key_path = os.path.join(os.path.dirname(__file__), '../core/code-generator/.openai_key')
+with open(key_path, "r") as f:
     OPENAI_API_KEY = f.read().strip()
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4-1106-preview")
 
