@@ -1,12 +1,12 @@
 module MCPGen
 
-go 1.23.0
+go 1.24.0
 
-toolchain go1.23.7
+toolchain go1.24.4
 
 require (
-	github.com/pb33f/libopenapi v0.22.0
-	github.com/speakeasy-api/openapi v0.2.0
+	github.com/pb33f/libopenapi v0.22.3
+	github.com/speakeasy-api/openapi v0.2.1
 	github.com/stretchr/testify v1.10.0
 )
 
@@ -19,6 +19,6 @@ require (
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
 	github.com/speakeasy-api/jsonpath v0.6.2 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.9-0.20240815153524-6ea36470d1bd // indirect
-	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
